@@ -5,8 +5,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-
-PlayerInput playerInput;
+  PlayerInput playerInput;
 
   [Header("References")]
   public Rigidbody collider;
@@ -35,9 +34,9 @@ PlayerInput playerInput;
     }
 
     public void OnJump(){
+		Vector3 newSpeed = Vector3.zero;
+		newSpeed.y += charJumpHeight;
         if(playerInput.actions["Jump"].WasPressedThisFrame())
-            Vector3 newSpeed = Vector3 + collider.linearVelocity;
-            newSpeed.y += charJumpHeight;
             collider.linearVelocity = newSpeed;
     }
 
