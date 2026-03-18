@@ -442,7 +442,7 @@ MonoBehaviour:
   camera: {fileID: 1755570581}
   debug: {fileID: 1785788142}
   charSpeed: 10
-  charJumpHeight: 6
+  charJumpHeight: 50
   charJumps: 1
 --- !u!54 &1785788136
 Rigidbody:
@@ -453,7 +453,7 @@ Rigidbody:
   m_GameObject: {fileID: 1785788134}
   serializedVersion: 5
   m_Mass: 1
-  m_LinearDamping: 0
+  m_LinearDamping: 8
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}

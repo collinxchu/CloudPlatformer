@@ -6,8 +6,13 @@ using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
-	PlayerInput playerInput;
+	// Player movement variables.
+	public Vector3 newSpeed;
 	int jumpCount;
+	bool updateMovement = false;
+	
+	// Input system reference.
+	PlayerInput playerInput;
 	
 	[Header("References")]
 	public Rigidbody collider;
@@ -35,36 +40,53 @@ public class PlayerController : MonoBehaviour
 	{
 		if (Physics.Raycast(transform.position, Vector3.down, distToGround + 0.01f))
 		{
-			Debug.Log("Grounded");
+			//Debug.Log("Grounded");
 			return true;
 		}
 		else
 		{
-			Debug.Log("Not grounded");
+			//Debug.Log("Not grounded");
 			return false;
 		}
 	}
 	
-	// Not called if the 'move' state hasn't changed. TODO: Fix.
-    public void OnMove(InputValue value){
-        var charMove = value.Get<Vector2>();
-        Vector3 newSpeed = Vector3.up * collider.linearVelocity.y;
-        newSpeed.x = charMove.x * charSpeed;
-        newSpeed.z = charMove.y * charSpeed;
-        collider.linearVelocity = newSpeed;
+    // This is triggered when the "Move" input action is activated.
+	// Look into "Unity input actions" if you want to know more.
+	public void OnMove(InputValue value){
+		var charMove = value.Get<Vector2>();
+		if (charMove == Vector2.zero) {
+			// If our 'move' value is neutral input, stop moving.
+			updateMovement = false;
+		}
+		else
+		{
+			// Otherwise, set our target direction and movement, 
+			// then toggle movement on.
+			newSpeed = Vector3.up * collider.linearVelocity.y;
+			newSpeed.x = charMove.x * charSpeed;
+			newSpeed.z = charMove.y * charSpeed;
+			updateMovement = true;
+		}
     }
 	
+	// Same as above, but with "Jump".
     public void OnJump(){
 		
         if(playerInput.actions["Jump"].WasPressedThisFrame())
+		{
 			if ((IsGrounded()) || (jumpCount > 0))
 			{
+				// I separated this into its own function,
+				// Just in case we want to call a jump
+				// from some other context.
 				Jump();
 			}
+		}
     }
 	
 	void Jump() {
-		collider.linearVelocity = new Vector3(collider.linearVelocity.x, charJumpHeight, collider.linearVelocity.z);
+		var jump = new Vector3(0,charJumpHeight,0);
+		collider.AddForce(jump, ForceMode.VelocityChange);
 		--jumpCount;
 	}
 
@@ -78,6 +100,12 @@ public class PlayerController : MonoBehaviour
 		if (IsGrounded())
 		{
 			jumpCount = charJumps;
+		}
+		if (updateMovement) {
+			// If we're allowed to move, move in the direction indicated.
+			// You can also set newSpeed manually some other way.
+			// TODO: Integrate animation states.
+			collider.linearVelocity = newSpeed;
 		}
 	}
 }
