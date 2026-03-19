@@ -85,8 +85,8 @@ public class PlayerController : MonoBehaviour
     }
 	
 	void Jump() {
-		var jump = new Vector3(0,charJumpHeight,0);
-		collider.AddForce(jump, ForceMode.VelocityChange);
+		var jump = new Vector3(collider.linearVelocity.x,0 + charJumpHeight,collider.linearVelocity.z);
+		collider.linearVelocity = jump;
 		--jumpCount;
 	}
 
@@ -105,6 +105,7 @@ public class PlayerController : MonoBehaviour
 			// If we're allowed to move, move in the direction indicated.
 			// You can also set newSpeed manually some other way.
 			// TODO: Integrate animation states.
+			newSpeed.y = collider.linearVelocity.y;
 			collider.linearVelocity = newSpeed;
 		}
 	}
