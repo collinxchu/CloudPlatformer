@@ -10,6 +10,9 @@ public class PlayerController : MonoBehaviour
 	public Vector3 newSpeed;
 	int jumpCount;
 	bool updateMovement = false;
+	public Quaternion pTrajectory;
+	Transform bnuyMesh;
+	Quaternion facingDirection;
 	
 	// Input system reference.
 	PlayerInput playerInput;
@@ -34,6 +37,7 @@ public class PlayerController : MonoBehaviour
         playerInput = GetComponent<PlayerInput>();
         InputSystem.actions.Enable();
         playerInput.currentActionMap?.Enable();
+		bnuyMesh = this.gameObject.transform.GetChild(0);
     }
 	
 	public bool IsGrounded()
@@ -104,9 +108,14 @@ public class PlayerController : MonoBehaviour
 		if (updateMovement) {
 			// If we're allowed to move, move in the direction indicated.
 			// You can also set newSpeed manually some other way.
-			// TODO: Integrate animation states.
+			// TODO: Integrate animation states.980
 			newSpeed.y = collider.linearVelocity.y;
 			collider.linearVelocity = newSpeed;
+			
+			// Figure out what direction we're trying to move in, then rotate to meet that specified angle.
+			pTrajectory = Quaternion.LookRotation(collider.linearVelocity.normalized, Vector3.up);
+			facingDirection = new Quaternion(0,pTrajectory.y,0,pTrajectory.w);
+			bnuyMesh.transform.rotation = Quaternion.Slerp(bnuyMesh.transform.rotation, facingDirection, Time.deltaTime * 20.0f);
 		}
 	}
 }
